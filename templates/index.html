@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡路里追踪器</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-fire"></i>
+                <span>卡路里追踪器</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-home"></i> 首页</a></li>
+                <li><a href="#" class="nav-link" data-page="add"><i class="fas fa-plus-circle"></i> 添加记录</a></li>
+                <li><a href="#" class="nav-link" data-page="history"><i class="fas fa-history"></i> 历史记录</a></li>
+                <li><a href="#" class="nav-link" data-page="stats"><i class="fas fa-chart-bar"></i> 统计分析</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 首页 -->
+    <div id="page-home" class="page active">
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">🍽️ 卡路里追踪器</h1>
+                <p class="hero-subtitle">记录每一餐，健康每一天</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-lg" onclick="navigateTo('add')">
+                        <i class="fas fa-plus"></i> 开始记录
+                    </button>
+                    <button class="btn btn-secondary btn-lg" onclick="navigateTo('history')">
+                        <i class="fas fa-list"></i> 查看历史
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="quick-stats">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>总记录数</h3>
+                        <p id="totalRecords" class="stat-value">0</p>
+                    </div>
+                </div>
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>日均卡路里</h3>
+                        <p id="avgCalories" class="stat-value">0</p>
+                    </div>
+                </div>
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>最高日摄入</h3>
+                        <p id="maxCalories" class="stat-value">0</p>
+                    </div>
+                </div>
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>记录天数</h3>
+                        <p id="totalDays" class="stat-value">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-records">
+                <h2 class="section-title">
+                    <i class="fas fa-clock"></i> 最近记录
+                </h2>
+                <div id="recentRecordsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加记录页面 -->
+    <div id="page-add" class="page">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="section-title">
+                    <i class="fas fa-plus-circle"></i> 添加新记录
+                </h2>
+                <form id="calorieForm" class="modern-form">
+                    <div class="form-group">
+                        <label for="date">
+                            <i class="fas fa-calendar-alt"></i> 日期
+                        </label>
+                        <input type="date" id="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="meal">
+                            <i class="fas fa-utensils"></i> 餐次
+                        </label>
+                        <select id="meal" required>
+                            <option value="">请选择餐次</option>
+                            <option value="早餐">🌅 早餐</option>
+                            <option value="午餐">☀️ 午餐</option>
+                            <option value="晚餐">🌙 晚餐</option>
+                            <option value="加餐">🍪 加餐</option>
+                            <option value="夜宵">🌃 夜宵</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="calories">
+                            <i class="fas fa-fire-alt"></i> 卡路里 (kcal)
+                        </label>
+                        <input type="number" id="calories" placeholder="例如：500" min="0" step="1" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-save"></i> 保存记录
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-block" onclick="navigateTo('home')">
+                            <i class="fas fa-times"></i> 取消
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史记录页面 -->
+    <div id="page-history" class="page">
+        <div class="container">
+            <div class="filter-bar">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i> 历史记录
+                </h2>
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label for="filterDate">
+                            <i class="fas fa-filter"></i> 按日期筛选：
+                        </label>
+                        <input type="date" id="filterDate">
+                    </div>
+                    <div class="filter-buttons">
+                        <button onclick="loadRecords()" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 查询
+                        </button>
+                        <button onclick="clearFilter()" class="btn btn-secondary">
+                            <i class="fas fa-eraser"></i> 清除
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="recordsList" class="records-container"></div>
+        </div>
+    </div>
+
+    <!-- 统计分析页面 -->
+    <div id="page-stats" class="page">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-chart-bar"></i> 统计分析
+            </h2>
+            
+            <div class="stats-overview">
+                <div class="overview-card">
+                    <h3><i class="fas fa-calculator"></i> 总体统计</h3>
+                    <div class="overview-grid">
+                        <div class="overview-item">
+                            <span class="overview-label">总记录数</span>
+                            <span class="overview-value" id="statTotalRecords">0</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">记录天数</span>
+                            <span class="overview-value" id="statTotalDays">0</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">日均卡路里</span>
+                            <span class="overview-value" id="statAvgCalories">0</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">最高日摄入</span>
+                            <span class="overview-value" id="statMaxCalories">0</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">最低日摄入</span>
+                            <span class="overview-value" id="statMinCalories">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-line"></i> 每日趋势</h3>
+                    <canvas id="dailyChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie"></i> 餐次分布</h3>
+                    <canvas id="mealChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示消息容器 -->
+    <div id="messageContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>
